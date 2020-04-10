@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  sospese-backend:
+    container_name: sospese-backend
+    restart: always
+    build: .
+    image: sospese-backend:1.0.0
+    ports:
+      - '3000:3000'
+    expose:
+      - '3000'
+    
