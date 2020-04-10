@@ -13,4 +13,4 @@ module.exports = fp(async (fastify, opts) => {
   // fastify.addHook('onSend', (request, reply, payload, done) => {
   //   next()
   // })
-})
+}, { name: 'onSend' })

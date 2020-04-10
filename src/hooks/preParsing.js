@@ -13,4 +13,4 @@ module.exports = fp(async (fastify, opts) => {
   // fastify.addHook('preParsing', (request, reply, next) => {
   //   next()
   // })
-})
+}, { name: 'preParsing' })

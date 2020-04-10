@@ -13,4 +13,4 @@ module.exports = fp(async (fastify, opts) => {
   // fastify.addHook('preHandler', (request, reply, next) => {
   //   next()
   // })
-})
+}, { anme: 'preHandler' })

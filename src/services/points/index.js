@@ -1,11 +1,11 @@
 'use strict'
 
-module.exports = async function (fastify, opts) {
-  fastify.get('/points', async function (request, reply) {
+const fp = require('fastify-plugin')
+
+module.exports = fp(async function (fastify, opts) {
+  fastify.get('/api/points', async function (request, reply) {
     let Point = await fastify.mongo.model('Point')
     let points = await Point.find({});
     return points
   })
-}
-
-module.exports.autoPrefix = '/api'
+}, { name: 'service_points'})

@@ -4,6 +4,7 @@
   "description": "SOSPESE Backend",
   "main": "server.js",
   "scripts": {
+    "test": "tap test/**/*.test.js",
     "start": "fastify-app run",
     "dev": "fastify-app run -l info -P -w"
   },

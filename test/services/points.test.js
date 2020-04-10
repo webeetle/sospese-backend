@@ -3,11 +3,12 @@
 const { test } = require('tap')
 const { build } = require('../helper')
 
-test('points is loaded', async (t) => {
+test('default root route', async (t) => {
   const app = build(t)
 
   const res = await app.inject({
-    url: '/points'
+    url: '/api/points'
   })
-  t.equal(res.payload, [])
+  app.mongo.close()
+  t.deepEqual(JSON.parse(res.payload), [])
 })

@@ -17,4 +17,4 @@ module.exports = fp(async (fastify, opts) => {
   // fastify.addHook('onError', (request, reply, next) => {
   //   next()
   // })
-})
+}, { name: 'onError'})
