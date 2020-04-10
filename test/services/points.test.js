@@ -3,11 +3,11 @@
 const { test } = require('tap')
 const { build } = require('../helper')
 
-test('hello is loaded', async (t) => {
+test('points is loaded', async (t) => {
   const app = build(t)
 
   const res = await app.inject({
-    url: '/hello'
+    url: '/points'
   })
-  t.equal(res.payload, 'hello, world!')
+  t.equal(res.payload, [])
 })

@@ -1,12 +1,28 @@
-version: '3.7'
+version: '3.3'
 services:
-  sospese-backend:
-    container_name: sospese-backend
-    restart: always
-    build: .
-    image: sospese-backend:1.0.0
+  # sospese-backend:
+  #   container_name: sospese-backend
+  #   # restart: always
+  #   build: .
+  #   image: sospese-backend:1.0.0
+  #   ports:
+  #     - '3000:3000'
+  #   expose:
+  #     - '3000'
+  #   links:
+  #     - mongo
+
+  mongo:
+    image: mongo
+    # restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
     ports:
-      - '3000:3000'
-    expose:
-      - '3000'
+      - "27017:27017"
+    volumes:
+      - /data/sospese:/data/db
+
     
