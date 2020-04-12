@@ -7,11 +7,12 @@ require('dotenv').config()
 
 module.exports = fp(async function (fastify, opts) {
   class Mongoose {
-    async connection() {
+    async connection () {
       if (mongoose.connection.readyState === 0) {
         await mongoose.connect(process.env.MONGO, {
           useNewUrlParser: true,
-          useUnifiedTopology: true
+          useUnifiedTopology: true,
+          useCreateIndex: true
         })
         return true
       } else {
@@ -19,14 +20,17 @@ module.exports = fp(async function (fastify, opts) {
       }
     }
 
-    async model(modelName) {
+    async model (modelName) {
       await this.connection()
-      let modelSchema = require(`${__dirname}/../models/${modelName}.js`)
-      return mongoose.model(modelName, modelSchema)
+      const modelSchema = require(`${__dirname}/../models/${modelName}.js`)
+      const model = mongoose.model(modelName, modelSchema)
+      await model.init()
+      await model.ensureIndexes()
+      return model
     }
 
-    close() {
-      if(mongoose.connection.readyState === 1) {
+    close () {
+      if (mongoose.connection.readyState === 1) {
         mongoose.connection.close()
         return true
       } else {
@@ -36,4 +40,4 @@ module.exports = fp(async function (fastify, opts) {
   }
 
   fastify.decorate('mongo', new Mongoose())
-}, { name: 'mongoose'})
+}, { name: 'mongoose' })

@@ -1,7 +1,7 @@
-const { Schema } = require("mongoose");
+const { Schema } = require('mongoose')
 
-module.exports = new Schema({
-  name:  {
+const Point = new Schema({
+  name: {
     type: String,
     required: true
   },
@@ -12,11 +12,11 @@ module.exports = new Schema({
   note: {
     type: String
   },
-  lat:  {
+  lat: {
     type: Number,
     required: true
   },
-  lon:  {
+  lng: {
     type: Number,
     required: true
   },
@@ -40,4 +40,8 @@ module.exports = new Schema({
       required: true
     }
   }
-}, { timestamps: true });
+}, { timestamps: true })
+
+Point.index({ location: '2dsphere' })
+
+module.exports = Point
