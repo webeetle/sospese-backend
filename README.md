@@ -1,8 +1,9 @@
-# SOSPESE Backend
-
-<div align="center">
-![BUILD](https://github.com/webeetle/sospese-backend/workflows/BUILD/badge.svg)
-</div>
+<p align="center">
+    <img src="https://raw.githubusercontent.com/webeetle/sospese-backend/master/logo.svg?sanitize=true"
+        height="130">
+</p>
+<p align="center">
+</p>
 
 ## Mission
 
