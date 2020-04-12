@@ -3,8 +3,13 @@
         height="130">
 </p>
 <p align="center">
-    ![BUILD](https://github.com/webeetle/sospese-backend/workflows/BUILD/badge.svg)
+    
+![BUILD](https://github.com/webeetle/sospese-backend/workflows/BUILD/badge.svg)
+[![issues](https://badgen.net/github/issues/webeetle/sospese-backend)](https://github.com/webeetle/sospese/issues)
+[![license](https://badgen.net/github/license/webeetle/sospese-backend)](./LICENSE)
 </p>
+
+---
 
 ## Mission
 
