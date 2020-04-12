@@ -1,7 +1,7 @@
 # SOSPESE Backend
 
 <div align="center">
-  ![BUILD](https://github.com/webeetle/sospese-backend/workflows/BUILD/badge.svg)
+![BUILD](https://github.com/webeetle/sospese-backend/workflows/BUILD/badge.svg)
 </div>
 
 ## Mission
