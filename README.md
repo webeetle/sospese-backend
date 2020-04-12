@@ -1,10 +1,11 @@
 # SOSPESE Backend
 
 <div align="center">
-![BUILD](https://github.com/webeetle/sospese-backend/workflows/BUILD/badge.svg)
-[![issues](https://badgen.net/github/issues/webeetle/sospese-backend)](https://github.com/webeetle/sospese-backend/issues)
-[![license](https://badgen.net/github/license/webeetle/sospese-backend)](./LICENSE)
+  ![BUILD](https://github.com/webeetle/sospese-backend/workflows/BUILD/badge.svg)
+  [![issues](https://badgen.net/github/issues/webeetle/sospese-backend)](https://github.com/webeetle/sospese-backend/issues)
+  [![license](https://badgen.net/github/license/webeetle/sospese-backend)](./LICENSE)
 </div>
+
 ---
 
 ## Mission
