@@ -1,7 +1,6 @@
 # SOSPESE Backend
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/webeetle/sospese-backend/master/logo.svg" alt="logo" width="50%" height="auto"></img><br />
   ![BUILD](https://github.com/webeetle/sospese-backend/workflows/BUILD/badge.svg?branch=master)
   [![issues](https://badgen.net/github/issues/webeetle/sospese-backend)](https://github.com/webeetle/sospese-backend/issues)
   [![license](https://badgen.net/github/license/webeetle/sospese-backend)](./LICENSE)
