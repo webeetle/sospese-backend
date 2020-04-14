@@ -27,6 +27,15 @@ const Point = new Schema({
     type: String,
     required: true
   },
+  votes: [
+    {
+      type: {
+        type: String,
+        enum: ['up', 'down']
+      },
+      message: String
+    }
+  ],
   pointType: [String],
   categoryType: [String],
   location: {

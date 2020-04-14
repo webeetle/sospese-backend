@@ -16,15 +16,17 @@ module.exports = async (fastify, opts) => {
   }, async (request, reply) => {
     const Point = await fastify.mongo.model('Point')
 
-    const points = await Point.aggregate([{
-      $geoNear: {
-        near: { type: 'Point', coordinates: [request.body.lng, request.body.lat] },
-        distanceField: 'dist.calculated',
-        maxDistance: request.body.distance,
-        includeLocs: 'dist.location',
-        spherical: true
+    var points = await Point.aggregate([
+      {
+        $geoNear: {
+          near: { type: 'Point', coordinates: [request.body.lng, request.body.lat] },
+          distanceField: 'dist.calculated',
+          maxDistance: request.body.distance,
+          includeLocs: 'dist.location',
+          spherical: true
+        }
       }
-    }]).sort({ 'dist.calculated': 1 })
+    ]).sort({ 'dist.calculated': 1 })
 
     return points
   })
@@ -60,16 +62,18 @@ module.exports = async (fastify, opts) => {
     return newPoint
   })
 
-  // fastify.post('/vote/:id', async(request, reply) => {
-  //   const Point = await fastify.mongo.model('Point')
-  //   const id = request.params['id']
-  //   try {
-  //     const point = Point.find({ _id: id })
-  //   } catch (e) {
-  //     reply.status(404)
-  //     return { 'error': 'message' }
-  //   }
-  // })
+  fastify.post('/vote/:id', async (request, reply) => {
+    const Point = await fastify.mongo.model('Point')
+    const id = request.params.id
+    const body = request.body
+    try {
+      const point = Point.find({ _id: id })
+      point.votes.push(body)
+    } catch (e) {
+      reply.status(404)
+      return { error: 'message' }
+    }
+  })
 }
 
 module.exports.autoPrefix = '/api/points'
