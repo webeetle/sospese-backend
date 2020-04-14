@@ -19,7 +19,7 @@ test('Test Points API', async (t) => {
         file: 'ImFkZHJlc3MiLCJsYXQiLCJsbmciLCJuYW1lIiwibG9jYXRpb25UeXBlIiwicG9pbnRUeXBlIiwiY2F0ZWdvcnlUeXBlIgoiVmlhIFNlbWV0ZWxsZSwgMjYgQW5ncmkgKFNBKSIsIjQwLjc0MzY5NDkiLCIxNC41NzE0Mjc5IiwiV2VCZWV0bGUgUy5yLmwuIiwicHJpdmF0byIsImNlbnRybyByYWNjb2x0YSIsImFsaW1lbnRhcmkiCg=='
       }
     })
-    t.deepEqual(JSON.parse(res.payload).result, 'ok')
+    t.equal(JSON.parse(res.body).result, 'ok')
   })
 
   t.test('Test Near', async (t) => {
@@ -32,7 +32,7 @@ test('Test Points API', async (t) => {
         lng: 14.5550957
       }
     })
-    t.deepEqual(JSON.parse(res.payload).length, 1)
+    t.equal(JSON.parse(res.body).length, 1)
   })
 
   t.test('Test Report', async (t) => {
@@ -49,9 +49,9 @@ test('Test Points API', async (t) => {
         categoryType: 'alimentari'
       }
     })
-    const obj = JSON.parse(res.payload)
-    t.deepEqual(obj.name, 'WeBeetle S.r.l.')
-    t.deepEqual(Object.prototype.hasOwnProperty.call(obj, '_id'), true)
+    const obj = JSON.parse(res.body)
+    t.equal(obj.name, 'WeBeetle S.r.l.')
+    t.equal(Object.prototype.hasOwnProperty.call(obj, '_id'), true)
   })
 
   t.end()

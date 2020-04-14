@@ -11,7 +11,7 @@ module.exports = async (fastify, opts) => {
         .prop('lat', S.number().required())
         .prop('lng', S.number().required()),
       reponse: S.object()
-        .prop('200', S.array(S.object(S.ref('#near'))))
+        .prop('200', S.array().items(S.object(S.ref('#near'))))
     }
   }, async (request, reply) => {
     const Point = await fastify.mongo.model('Point')
@@ -30,9 +30,6 @@ module.exports = async (fastify, opts) => {
   })
 
   fastify.post('/upload', {
-    preHandler: async (request, reply) => {
-      return request.jwtVerify()
-    }
   }, async (request, reply) => {
     const Point = await fastify.mongo.model('Point')
     const body = request.body

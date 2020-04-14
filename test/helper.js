@@ -15,10 +15,9 @@ async function build (t) {
   process.env.MONGO = await mongod.getUri()
 
   const app = Fastify()
-
   app.register(fp(App), config())
-  t.tearDown(app.close.bind(app))
 
+  t.tearDown(app.close.bind(app))
   return app
 }
 
