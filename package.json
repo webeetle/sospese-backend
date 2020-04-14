@@ -23,6 +23,7 @@
     "fastify": "^2.13.0",
     "fastify-autoload": "^1.2.2",
     "fastify-plugin": "^1.6.1",
+    "fluent-schema": "^0.10.0",
     "is-docker": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
     "make-promises-safe": "^5.1.0",

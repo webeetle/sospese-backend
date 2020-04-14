@@ -1,18 +1,22 @@
 'use strict'
 
 const csvtojson = require('csvtojson/v2')
+const S = require('fluent-schema')
 
 module.exports = async (fastify, opts) => {
-  fastify.get('/', async function (request, reply) {
+  fastify.post('/near', {
+    schema: {
+      body: S.object()
+        .prop('distance', S.number().required())
+        .prop('lat', S.number().required())
+        .prop('lng', S.number().required()),
+      reponse: S.object()
+        .prop('200', S.array(S.object(S.ref('#near'))))
+    }
+  }, async (request, reply) => {
     const Point = await fastify.mongo.model('Point')
-    const points = await Point.find({})
-    return points
-  })
 
-  fastify.post('/near', async (request, reply) => {
-    const Point = await fastify.mongo.model('Point')
-
-    var points = await Point.aggregate([{
+    const points = await Point.aggregate([{
       $geoNear: {
         near: { type: 'Point', coordinates: [request.body.lng, request.body.lat] },
         distanceField: 'dist.calculated',
@@ -25,7 +29,11 @@ module.exports = async (fastify, opts) => {
     return points
   })
 
-  fastify.post('/upload', async (request, reply) => {
+  fastify.post('/upload', {
+    preHandler: async (request, reply) => {
+      return request.jwtVerify()
+    }
+  }, async (request, reply) => {
     const Point = await fastify.mongo.model('Point')
     const body = request.body
     const fileData = await csvtojson({ delimiter: ',' }).fromString((body.file) ? Buffer.from(body.file, 'base64').toString('ascii') : '')
