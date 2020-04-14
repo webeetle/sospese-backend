@@ -39,7 +39,8 @@ const Point = new Schema({
       type: [Number],
       required: true
     }
-  }
+  },
+  reportedFromComunity: Boolean
 }, { timestamps: true })
 
 Point.index({ location: '2dsphere' })
