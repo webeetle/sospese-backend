@@ -24,6 +24,7 @@
     "fastify-autoload": "^1.2.2",
     "fastify-plugin": "^1.6.1",
     "is-docker": "^2.0.0",
+    "jsonwebtoken": "^8.5.1",
     "make-promises-safe": "^5.1.0",
     "mongoose": "^5.9.7",
     "mongoose-schema-jsonschema": "^1.2.1",
