@@ -4,8 +4,6 @@
   "description": "SOSPESE Backend",
   "main": "server.js",
   "scripts": {
-    "test": "npm run lint && npm run unit",
-    "unit": "tap test/**/*.test.js",
     "start": "fastify-app run",
     "dev": "fastify-app run -l info -w",
     "lint": "npm run lint:standard",

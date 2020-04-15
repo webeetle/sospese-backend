@@ -1,17 +1,17 @@
 'use strict'
 
 const fp = require('fastify-plugin')
-const mongoosePlugin = require("fastify-mongoose-driver").plugin
+const mongoosePlugin = require('fastify-mongoose-driver').plugin
 const fs = require('fs')
 const path = require('path')
 
 const MODELS_DIR = path.join(__dirname, '..', 'models')
 
-module.exports = fp (async function (fastify, opts) {
+module.exports = fp(async function (fastify, opts) {
   const dir = fs.readdirSync(MODELS_DIR)
   const files = []
 
-  for (let file of dir) {
+  for (const file of dir) {
     const model = require(`${path.join(MODELS_DIR, file)}`)
     files.push({
       name: path.parse(file).name,
@@ -27,6 +27,6 @@ module.exports = fp (async function (fastify, opts) {
       useCreateIndex: true
     }
   }
-  
+
   fastify.register(mongoosePlugin, mongooseOpts)
 })
