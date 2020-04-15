@@ -1,14 +1,13 @@
 'use strict'
 
 const fp = require('fastify-plugin')
-const point = require('../models/Point')
-
 module.exports = fp(async function (fastify, opts) {
-  const pointSchema = await point.jsonSchema()
-  const nearSchema = { ...pointSchema }
+  const pointSchema = {}
+  const nearSchema = {}
 
   Object.assign(pointSchema, {
-    $id: '#point'
+    $id: '#point',
+    properties: {}
   })
 
   Object.assign(nearSchema, {

@@ -5,7 +5,7 @@ const JWT = require('fastify-jwt')
 
 module.exports = fp(async (fastify, opts) => {
   const jwtOpts = Object.assign({}, {
-    secret: process.env.JWT_KEY || 'UjCXLx587TumMzBYE2vgQyD6H'
+    secret: process.env.JWT_KEY || 'MySecretSecureKey'
   }, opts.jwt)
 
   fastify.register(JWT, jwtOpts)

@@ -5,9 +5,9 @@ const { build, closeMongo } = require('../helper')
 
 test('Test Points API', async (t) => {
   const app = await build(t)
+  let tempId = ''
 
   t.tearDown(async () => {
-    app.mongo.close()
     await closeMongo()
   })
 
@@ -16,7 +16,7 @@ test('Test Points API', async (t) => {
       method: 'POST',
       url: '/api/points/upload',
       payload: {
-        file: 'ImFkZHJlc3MiLCJsYXQiLCJsbmciLCJuYW1lIiwibG9jYXRpb25UeXBlIiwicG9pbnRUeXBlIiwiY2F0ZWdvcnlUeXBlIgoiVmlhIFNlbWV0ZWxsZSwgMjYgQW5ncmkgKFNBKSIsIjQwLjc0MzY5NDkiLCIxNC41NzE0Mjc5IiwiV2VCZWV0bGUgUy5yLmwuIiwicHJpdmF0byIsImNlbnRybyByYWNjb2x0YSIsImFsaW1lbnRhcmkiCg=='
+        file: 'ImFkZHJlc3MiLCJsYXQiLCJsbmciLCJuYW1lIiwibG9jYXRpb25UeXBlIiwicG9pbnRUeXBlIiwiY2F0ZWdvcnlUeXBlIgoiVmlhIFNlbWV0ZWxsZSwgMjYgQW5ncmkgKFNBKSIsNDAuNzQzNjk0OSwxNC41NzE0Mjc5LCJXZUJlZXRsZSBTLnIubC4iLCJwcml2YXRvIiwiY2VudHJvIHJhY2NvbHRhIiwiYWxpbWVudGFyaSI='
       }
     })
     t.equal(JSON.parse(res.body).result, 'ok')
@@ -50,7 +50,22 @@ test('Test Points API', async (t) => {
       }
     })
     const obj = JSON.parse(res.body)
+    tempId = obj._id
     t.equal(obj.name, 'WeBeetle S.r.l.')
+    t.equal(Object.prototype.hasOwnProperty.call(obj, '_id'), true)
+  })
+
+  t.test('Test Vote Up', async (t) => {
+    const res = await app.inject({
+      method: 'POST',
+      url: `/api/points/vote/${tempId}`,
+      payload: {
+        type: 'up'
+      }
+    })
+    const obj = JSON.parse(res.body)
+    t.equal(obj.name, 'WeBeetle S.r.l.')
+    t.equal(obj.votes.length, 1)
     t.equal(Object.prototype.hasOwnProperty.call(obj, '_id'), true)
   })
 

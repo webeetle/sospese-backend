@@ -4,6 +4,9 @@ const csvtojson = require('csvtojson/v2')
 const S = require('fluent-schema')
 
 module.exports = async (fastify, opts) => {
+  const pointsCollection = fastify.mongo.db.collection('points')
+  const { ObjectId } = fastify.mongo
+
   fastify.post('/near', {
     schema: {
       body: S.object()
@@ -14,9 +17,7 @@ module.exports = async (fastify, opts) => {
         .prop('200', S.array().items(S.object(S.ref('#near'))))
     }
   }, async (request, reply) => {
-    const Point = await fastify.mongo.model('Point')
-
-    var points = await Point.aggregate([
+    var points = await pointsCollection.aggregate([
       {
         $geoNear: {
           near: { type: 'Point', coordinates: [request.body.lng, request.body.lat] },
@@ -25,53 +26,92 @@ module.exports = async (fastify, opts) => {
           includeLocs: 'dist.location',
           spherical: true
         }
+      },
+      {
+        $addFields: {
+          thumbsUp: {
+            $size: {
+              $filter: {
+                input: { $ifNull: ['$votes', []] },
+                as: 'vote',
+                cond: { $eq: ['$$vote.type', 'up'] }
+              }
+            }
+          },
+          thumbsDown: {
+            $size: {
+              $filter: {
+                input: { $ifNull: ['$votes', []] },
+                as: 'vote',
+                cond: { $eq: ['$$vote.type', 'down'] }
+              }
+            }
+          },
+          thumbsDownVotes: {
+            $filter: {
+              input: { $ifNull: ['$votes', []] },
+              as: 'vote',
+              cond: { $eq: ['$$vote.type', 'down'] }
+            }
+          }
+        }
       }
-    ]).sort({ 'dist.calculated': 1 })
-
+    ]).sort({ 'dist.calculated': 1 }).toArray()
     return points
   })
 
-  fastify.post('/upload', {
-  }, async (request, reply) => {
-    const Point = await fastify.mongo.model('Point')
+  fastify.post('/upload', async (request, reply) => {
     const body = request.body
     const fileData = await csvtojson({ delimiter: ',' }).fromString((body.file) ? Buffer.from(body.file, 'base64').toString('ascii') : '')
     for (const fileDataKey in fileData) {
       if (fileData[fileDataKey].lng && fileData[fileDataKey].lat) {
         fileData[fileDataKey].location = {
           type: 'Point',
-          coordinates: [fileData[fileDataKey].lng, fileData[fileDataKey].lat]
+          coordinates: [Number(fileData[fileDataKey].lng), Number(fileData[fileDataKey].lat)]
         }
-        fileData[fileDataKey] = new Point(fileData[fileDataKey])
-        await fileData[fileDataKey].save()
+        fileData[fileDataKey].votes = []
+        await pointsCollection.insertOne(fileData[fileDataKey])
       }
     }
     return { result: 'ok' }
   })
 
   fastify.post('/report', async (request, reply) => {
-    const Point = await fastify.mongo.model('Point')
     const body = request.body
-    const newPoint = new Point(body)
-    newPoint.location = {
+    body.location = {
       type: 'Point',
       coordinates: [body.lng, body.lat]
     }
-    newPoint.reportedFromComunity = true
-    await newPoint.save()
-    return newPoint
+    body.votes = []
+    body.reportedFromComunity = true
+    try {
+      const res = await pointsCollection.insertOne(body)
+      return res.ops[0]
+    } catch (e) {
+      reply.status(500)
+      return { error: 'Unable To Create This Point' }
+    }
   })
 
   fastify.post('/vote/:id', async (request, reply) => {
-    const Point = await fastify.mongo.model('Point')
     const id = request.params.id
     const body = request.body
     try {
-      const point = Point.find({ _id: id })
-      point.votes.push(body)
+      const res = await pointsCollection.findOneAndUpdate(
+        { _id: ObjectId(id) },
+        {
+          $push: {
+            votes: { type: body.type, message: body.message }
+          }
+        },
+        {
+          returnOriginal: false
+        }
+      )
+      return res.value
     } catch (e) {
       reply.status(404)
-      return { error: 'message' }
+      return { error: e.message }
     }
   })
 }
