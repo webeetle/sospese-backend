@@ -1,6 +1,5 @@
 'use strict'
 
-const csvtojson = require('csvtojson/v2')
 const S = require('fluent-schema')
 
 module.exports = async (fastify, opts) => {
@@ -47,33 +46,14 @@ module.exports = async (fastify, opts) => {
               }
             }
           },
-          thumbsDownVotes: {
-            $filter: {
-              input: { $ifNull: ['$votes', []] },
-              as: 'vote',
-              cond: { $eq: ['$$vote.type', 'down'] }
-            }
+          totalDonations: {
+            $size: { $ifNull: ['$donations', []] }
           }
         }
-      }
+      },
+      { $project: { votes: 0, donations: 0 } }
     ]).sort({ 'dist.calculated': 1 }).toArray()
     return points
-  })
-
-  fastify.post('/upload', async (request, reply) => {
-    const body = request.body
-    const fileData = await csvtojson({ delimiter: ',' }).fromString((body.file) ? Buffer.from(body.file, 'base64').toString('ascii') : '')
-    for (const fileDataKey in fileData) {
-      if (fileData[fileDataKey].lng && fileData[fileDataKey].lat) {
-        fileData[fileDataKey].location = {
-          type: 'Point',
-          coordinates: [Number(fileData[fileDataKey].lng), Number(fileData[fileDataKey].lat)]
-        }
-        fileData[fileDataKey].votes = []
-        await pointsCollection.insertOne(fileData[fileDataKey])
-      }
-    }
-    return { result: 'ok' }
   })
 
   fastify.post('/report', async (request, reply) => {
@@ -83,6 +63,7 @@ module.exports = async (fastify, opts) => {
       coordinates: [body.lng, body.lat]
     }
     body.votes = []
+    body.donations = []
     body.reportedFromComunity = true
     try {
       const res = await pointsCollection.insertOne(body)
@@ -97,7 +78,7 @@ module.exports = async (fastify, opts) => {
     const id = request.params.id
     const body = request.body
     try {
-      const res = await pointsCollection.findOneAndUpdate(
+      await pointsCollection.findOneAndUpdate(
         { _id: ObjectId(id) },
         {
           $push: {
@@ -108,11 +89,42 @@ module.exports = async (fastify, opts) => {
           returnOriginal: false
         }
       )
-      return res.value
+      return { message: 'ok' }
     } catch (e) {
       reply.status(404)
       return { error: e.message }
     }
+  })
+
+  fastify.post('/donation/:id', async (request, reply) => {
+    const id = request.params.id
+    const body = request.body
+    try {
+      await pointsCollection.findOneAndUpdate(
+        { _id: ObjectId(id) },
+        {
+          $push: {
+            donations: { name: (body.name) ? body.name : 'anonimo', message: body.message }
+          }
+        },
+        {
+          returnOriginal: false
+        }
+      )
+      return { message: 'ok' }
+    } catch (e) {
+      reply.status(404)
+      return { error: e.message }
+    }
+  })
+
+  fastify.get('/stats', async (request, reply) => {
+    var stats = await pointsCollection.aggregate([
+      { $addFields: { totalDonations: { $size: { $ifNull: ['$donations', []] } } } },
+      { $group: { _id: null, donations: { $sum: '$totalDonations' }, points: { $sum: 1 } } },
+      { $project: { _id: 0 } }
+    ]).toArray()
+    return stats[0]
   })
 }
 
