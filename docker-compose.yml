@@ -49,8 +49,6 @@ services:
   certbot:
     container_name: certbot
     image: certbot/certbot
-    networks:
-      - nginx_net
     volumes:
       - ./conf/certbot/conf:/etc/letsencrypt
       - ./conf/certbot/www:/var/www/certbot
