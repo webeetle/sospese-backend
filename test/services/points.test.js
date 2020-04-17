@@ -46,6 +46,7 @@ test('Test Points API', async (t) => {
     })
     const obj = JSON.parse(res.body)
     t.equal(obj[0].name, 'WeBeetle S.r.l.')
+    t.ok(obj[0].dist.calculated)
   })
 
   t.test('Test Vote Up', async (t) => {
@@ -82,6 +83,15 @@ test('Test Points API', async (t) => {
     t.equal(obj.donations, 1)
   })
 
+  t.test('Test GET Point By id', async (t) => {
+    const res = await app.inject({
+      method: 'GET',
+      url: `/api/points/${tempId}`
+    })
+    const obj = JSON.parse(res.body)
+    t.equal(obj.name, 'WeBeetle S.r.l.')
+  })
+
   t.test('Test Vote Up Fail', async (t) => {
     const res = await app.inject({
       method: 'POST',
@@ -100,6 +110,14 @@ test('Test Points API', async (t) => {
       payload: {
         message: 'donare è bello '
       }
+    })
+    t.equal(res.statusCode, 404)
+  })
+
+  t.test('Test GET Point By id Fail', async (t) => {
+    const res = await app.inject({
+      method: 'GET',
+      url: '/api/points/testfail'
     })
     t.equal(res.statusCode, 404)
   })

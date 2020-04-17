@@ -126,6 +126,47 @@ module.exports = async (fastify, opts) => {
     ]).toArray()
     return stats[0]
   })
+
+  fastify.get('/:id', async (request, reply) => {
+    const id = request.params.id
+    try {
+      var point = await pointsCollection.aggregate([
+        {
+          $match: { _id: ObjectId(id) }
+        },
+        {
+          $addFields: {
+            thumbsUp: {
+              $size: {
+                $filter: {
+                  input: { $ifNull: ['$votes', []] },
+                  as: 'vote',
+                  cond: { $eq: ['$$vote.type', 'up'] }
+                }
+              }
+            },
+            thumbsDown: {
+              $size: {
+                $filter: {
+                  input: { $ifNull: ['$votes', []] },
+                  as: 'vote',
+                  cond: { $eq: ['$$vote.type', 'down'] }
+                }
+              }
+            },
+            totalDonations: { $size: { $ifNull: ['$donations', []] } }
+          }
+        },
+        {
+          $project: { votes: 0, donations: 0 }
+        }
+      ]).toArray()
+      return point[0]
+    } catch (e) {
+      reply.status(404)
+      return { error: e.message }
+    }
+  })
 }
 
 module.exports.autoPrefix = '/api/points'
