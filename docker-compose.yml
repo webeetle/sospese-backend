@@ -12,7 +12,6 @@ services:
     expose:
       - '3000'
     depends_on:
-      - nginx
       - mongo
     links:
       - mongo
@@ -36,6 +35,10 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nginx
+    links:
+      - sospese-backend
+    depends_on:
+      - sospese-backend
     ports:
       - 80:80
       - 443:443
@@ -43,19 +46,19 @@ services:
       - ./html:/var/www/html
       - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./conf/certbot/etc:/etc/letsencrypt
-      - ./conf/certbot/var:/var/lib/letsencrypt
-
-  certbot:
-    container_name: certbot
-    image: certbot/certbot
-    volumes:
       - ./conf/certbot/conf:/etc/letsencrypt
-      - ./conf/certbot/www:/var/www/certbot
-      - ./html:/var/www/html
-    restart: unless-stopped
-    command: certonly --webroot --webroot-path=/var/www/html --email info@webeetle.com --agree-tos --no-eff-email --staging -d api.sospese.io 
-    depends_on:
-      - nginx
+#      - ./conf/certbot/etc:/etc/letsencrypt
+#      - ./conf/certbot/var:/var/lib/letsencrypt
 
-    
+#  certbot:
+#    container_name: certbot
+#    image: certbot/certbot
+#    links:
+#      - nginx
+#    volumes:
+#      - ./conf/certbot/conf:/etc/letsencrypt
+#      - ./conf/certbot/www:/var/www/certbot
+#      - ./html:/var/www/html
+#    command: certonly --webroot --webroot-path=/var/www/html --email info@webeetle.com --agree-tos --no-eff-email --staging -d api.sospese.io 
+#    depends_on:
+#      - nginx
