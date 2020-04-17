@@ -48,7 +48,8 @@ module.exports = async (fastify, opts) => {
           },
           totalDonations: {
             $size: { $ifNull: ['$donations', []] }
-          }
+          },
+          createdAt: { $toDate: '$_id' }
         }
       },
       { $project: { votes: 0, donations: 0 } }
@@ -61,6 +62,15 @@ module.exports = async (fastify, opts) => {
     body.location = {
       type: 'Point',
       coordinates: [body.lng, body.lat]
+    }
+    body.contacts = []
+    if (body.email) {
+      body.contacts.push(body.email)
+      delete body.email
+    }
+    if (body.tel) {
+      body.contacts.push(body.tel)
+      delete body.tel
     }
     body.votes = []
     body.donations = []
@@ -81,15 +91,13 @@ module.exports = async (fastify, opts) => {
       await pointsCollection.findOneAndUpdate(
         { _id: ObjectId(id) },
         {
+          $currentDate: { updatedAt: true },
           $push: {
             votes: { type: body.type, message: body.message }
           }
-        },
-        {
-          returnOriginal: false
         }
       )
-      return { message: 'ok' }
+      return { message: 'votation saved successfully' }
     } catch (e) {
       reply.status(404)
       return { error: e.message }
@@ -103,15 +111,13 @@ module.exports = async (fastify, opts) => {
       await pointsCollection.findOneAndUpdate(
         { _id: ObjectId(id) },
         {
+          $currentDate: { updatedAt: true },
           $push: {
             donations: { name: (body.name) ? body.name : 'anonimo', message: body.message }
           }
-        },
-        {
-          returnOriginal: false
         }
       )
-      return { message: 'ok' }
+      return { message: 'donation saved successfully' }
     } catch (e) {
       reply.status(404)
       return { error: e.message }
@@ -154,7 +160,8 @@ module.exports = async (fastify, opts) => {
                 }
               }
             },
-            totalDonations: { $size: { $ifNull: ['$donations', []] } }
+            totalDonations: { $size: { $ifNull: ['$donations', []] } },
+            createdAt: { $toDate: '$_id' }
           }
         },
         {

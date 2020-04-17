@@ -2,7 +2,7 @@ version: '3.3'
 services:
   sospese-backend:
     container_name: sospese-backend
-    # restart: always
+    restart: always
     build: .
     image: sospese-backend:1.0.0
     ports:
@@ -13,12 +13,14 @@ services:
       - mongo
   mongo:
     image: mongo
-    # restart: always
+    restart: always
     logging:
       driver: "json-file"
       options:
         max-size: "200k"
         max-file: "10"
+    environment:
+      - TZ=Europe/Rome
     ports:
       - "27017:27017"
     volumes:

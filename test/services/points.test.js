@@ -23,14 +23,13 @@ test('Test Points API', async (t) => {
         locationType: 'privato',
         pointType: 'centro raccolta',
         categoryType: 'alimentari',
-        contacts: [
-          'info@webeetle.com'
-        ]
+        email: 'info@webeetle.com'
       }
     })
     const obj = JSON.parse(res.body)
     tempId = obj._id
     t.equal(obj.name, 'WeBeetle S.r.l.')
+    t.equal(obj.contacts[0], 'info@webeetle.com')
     t.equal(Object.prototype.hasOwnProperty.call(obj, '_id'), true)
   })
 
@@ -49,7 +48,7 @@ test('Test Points API', async (t) => {
     t.ok(obj[0].dist.calculated)
   })
 
-  t.test('Test Vote Up', async (t) => {
+  t.test('Test Vote', async (t) => {
     const res = await app.inject({
       method: 'POST',
       url: `/api/points/vote/${tempId}`,
@@ -58,7 +57,7 @@ test('Test Points API', async (t) => {
       }
     })
     const obj = JSON.parse(res.body)
-    t.equal(obj.message, 'ok')
+    t.equal(obj.message, 'votation saved successfully')
   })
 
   t.test('Test Donation', async (t) => {
@@ -70,7 +69,7 @@ test('Test Points API', async (t) => {
       }
     })
     const obj = JSON.parse(res.body)
-    t.equal(obj.message, 'ok')
+    t.equal(obj.message, 'donation saved successfully')
   })
 
   t.test('Test Stast', async (t) => {
