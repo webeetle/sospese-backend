@@ -46,16 +46,16 @@ services:
       - ./conf/dhparam:/etc/nginx/dhparam
       - ./conf/certbot/conf:/etc/nginx/ssl
       - ./conf/certbot/data:/usr/share/nginx/html/letsencrypt
-
- certbot:
-   container_name: certbot
-   image: certbot/certbot
-   links:
-     - nginx
-   volumes:
-    - ./conf/certbot/conf:/etc/letsencrypt
-    - ./conf/certbot/logs:/var/log/letsencrypt
-    - ./conf/certbot/data:/usr/share/nginx/html/letsencrypt
-   command: certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email info@webeetle.com --agree-tos --no-eff-email -d api.sospese.io 
-   depends_on:
-     - nginx
+      
+  certbot:
+    container_name: certbot
+    image: certbot/certbot
+    links:
+      - nginx
+    volumes:
+      - ./conf/certbot/conf:/etc/letsencrypt
+      - ./conf/certbot/logs:/var/log/letsencrypt
+      - ./conf/certbot/data:/usr/share/nginx/html/letsencrypt
+    command: certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email info@webeetle.com --agree-tos --no-eff-email -d api.sospese.io 
+    depends_on:
+      - nginx
