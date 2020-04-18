@@ -43,22 +43,20 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./html:/var/www/html
-      - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./conf/certbot/conf:/etc/letsencrypt
-#      - ./conf/certbot/etc:/etc/letsencrypt
-#      - ./conf/certbot/var:/var/lib/letsencrypt
+      - ./conf/nginx:/etc/nginx/conf.d
+      - ./conf/dhparam:/etc/nginx/dhparam
+      - ./conf/certbot/conf:/etc/nginx/ssl
+      - ./conf/certbot/data:/usr/share/nginx/html/letsencrypt
 
-#  certbot:
-#    container_name: certbot
-#    image: certbot/certbot
-#    links:
-#      - nginx
-#    volumes:
-#      - ./conf/certbot/conf:/etc/letsencrypt
-#      - ./conf/certbot/www:/var/www/certbot
-#      - ./html:/var/www/html
-#    command: certonly --webroot --webroot-path=/var/www/html --email info@webeetle.com --agree-tos --no-eff-email --staging -d api.sospese.io 
-#    depends_on:
-#      - nginx
+ certbot:
+   container_name: certbot
+   image: certbot/certbot
+   links:
+     - nginx
+   volumes:
+    - ./conf/certbot/conf:/etc/letsencrypt
+    - ./conf/certbot/logs:/var/log/letsencrypt
+    - ./conf/certbot/data:/usr/share/nginx/html/letsencrypt
+   command: certonly --webroot --webroot-path=/usr/share/nginx/html/letsencrypt --email info@webeetle.com --agree-tos --no-eff-email -d api.sospese.io 
+   depends_on:
+     - nginx
